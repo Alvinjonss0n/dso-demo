@@ -47,7 +47,8 @@ pipeline {
             /kaniko/executor \
               --context=`pwd` \
               --dockerfile=`pwd`/Dockerfile \
-              --destination=alvinjonss0n/lfs262-sample-app:${BUILD_NUMBER}
+              --destination=alvinjonss0n/lfs262-sample-app:${BUILD_NUMBER} \
+              --force
           '''
         }
       }
