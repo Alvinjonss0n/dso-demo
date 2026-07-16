@@ -29,30 +29,24 @@ pipeline {
         }
       }
     }
-    stage('Package') {
-      parallel {
-        stage('Create Jarfile') {
-          steps {
-            container('maven') {
-              sh 'mvn package -DskipTests'
-            }
-          }
+stage('Package') {
+  parallel {
+    stage('Create Jarfile') {
+      steps {
+        container('maven') {
+          sh 'mvn package -DskipTests'
         }
       }
     }
-    stage('Build and Publish Image') {
+    stage('OCI Image BnP') {
       steps {
         container('kaniko') {
-          sh '''
-            /kaniko/executor \
-              --context=`pwd` \
-              --dockerfile=`pwd`/Dockerfile \
-              --destination=alvinjonss0n/lfs262-sample-app:${BUILD_NUMBER} \
-              --force
-          '''
+          sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --insecure --skip-tls-verify --cache=true --destination=docker.io/alvinjonss0n/dso-demo'
         }
       }
     }
+  }
+}
     stage('Deploy to Dev') {
       steps {
         // TODO
