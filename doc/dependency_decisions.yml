@@ -41,32 +41,25 @@
     :why: 
     :versions:
     - 1.5.34
-    :when: 2026-07-21
+    :when: 2026-07-21 09:00:00.000000000 Z
 - - :approve
   - logback-classic
   - :who: 
     :why: 
     :versions:
     - 1.5.34
-    :when: 2026-07-21
+    :when: 2026-07-21 09:00:00.000000000 Z
 - - :approve
   - jakarta.xml.bind-api
   - :who: 
     :why: 
     :versions:
     - 4.0.5
-    :when: 2026-07-21
-- - :approve
-  - jakarta.el
-  - :who: 
-    :why: 
-    :versions:
-    - 3.0.3
-    :when: 2020-05-31 15:29:37.769070000 Z
+    :when: 2026-07-21 09:00:00.000000000 Z
 - - :approve
   - jakarta.annotation-api
   - :who: 
     :why: 
     :versions:
     - 3.0.0
-    :when: 2026-07-21
+    :when: 2026-07-21 09:00:00.000000000 Z
