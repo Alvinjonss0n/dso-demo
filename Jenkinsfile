@@ -6,6 +6,9 @@ pipeline {
       idleMinutes 1
     }
   }
+  environment {
+    ARGO_SERVER = 'argocd-server.argocd.svc.cluster.local:80'
+  }
   stages {
     stage('Build') {
       parallel {
@@ -120,9 +123,14 @@ pipeline {
       }
     }
     stage('Deploy to Dev') {
+      environment {
+        AUTH_TOKEN = credentials('argocd-jenkins-deployer-token')
+      }
       steps {
-        // TODO
-        sh "echo done"
+        container('docker-tools') {
+          sh 'docker run -t schoolofdevops/argocd-cli argocd app sync dso-demo --plaintext --server $ARGO_SERVER --auth-token $AUTH_TOKEN'
+          sh 'docker run -t schoolofdevops/argocd-cli argocd app wait dso-demo --health --timeout 300 --plaintext --server $ARGO_SERVER --auth-token $AUTH_TOKEN'
+        }
       }
     }
   }
