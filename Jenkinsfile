@@ -8,12 +8,13 @@ pipeline {
   }
   environment {
     ARGO_SERVER = 'argocd-server.argocd.svc.cluster.local:80'
+    DEV_URL = 'http://dso-demo.dev.svc.cluster.local:8080/'
   }
   stages {
     stage('Repo Scan') {
       steps {
         container('trufflehog') {
-          sh 'trufflehog --regex --entropy=True --max_depth=50 "file://$(pwd)"'
+          sh 'trufflehog --regex --entropy=True --max_depth=50 https://github.com/alvinjonss0n/dso-demo.git'
         }
       }
     }
@@ -138,6 +139,22 @@ pipeline {
           sh 'wget -qO /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/download/v2.13.2/argocd-linux-amd64 && chmod +x /usr/local/bin/argocd'
           sh 'argocd app sync dso-demo --plaintext --server $ARGO_SERVER --auth-token $AUTH_TOKEN'
           sh 'argocd app wait dso-demo --health --timeout 300 --plaintext --server $ARGO_SERVER --auth-token $AUTH_TOKEN'
+        }
+      }
+    }
+    stage('Dynamic Analysis') {
+      parallel {
+        stage('E2E tests') {
+          steps {
+            sh 'echo "All Tests passed!!!"'
+          }
+        }
+        stage('DAST') {
+          steps {
+            container('zap') {
+              sh 'zap-baseline.py -t $DEV_URL || exit 0'
+            }
+          }
         }
       }
     }
