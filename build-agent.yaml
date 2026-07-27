@@ -23,6 +23,14 @@ spec:
           name: docker-sock
         - mountPath: /tmp/trivycache/
           name: trivycache
+    - name: trivy
+      image: aquasec/trivy:0.58.1
+      command:
+        - cat
+      tty: true
+      volumeMounts:
+        - mountPath: /tmp/trivycache/
+          name: trivycache
     - name: trufflehog
       image: rmkanda/trufflehog
       command:
