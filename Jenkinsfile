@@ -116,7 +116,7 @@ pipeline {
         stage('Image Scan') {
           steps {
             container('docker-tools') {
-              sh 'trivy image --timeout 20m --exit-code 1 --severity CRITICAL --scanners vuln alvinjonss0n/dso-demo'
+              sh 'trivy image --timeout 20m --exit-code 1 --severity CRITICAL --security-checks vuln alvinjonss0n/dso-demo'
             }
           }
         }
