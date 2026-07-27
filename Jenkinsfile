@@ -13,7 +13,7 @@ pipeline {
     stage('Repo Scan') {
       steps {
         container('trufflehog') {
-          sh 'trufflehog --regex --entropy=True --max_depth=50 file://. '
+          sh 'trufflehog --regex --entropy=True --max_depth=50 "file://$(pwd)"'
         }
       }
     }
