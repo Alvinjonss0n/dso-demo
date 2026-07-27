@@ -128,6 +128,7 @@ pipeline {
       }
       steps {
         container('argocd') {
+          sh 'wget -qO /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/download/v2.13.2/argocd-linux-amd64 && chmod +x /usr/local/bin/argocd'
           sh 'argocd app sync dso-demo --plaintext --server $ARGO_SERVER --auth-token $AUTH_TOKEN'
           sh 'argocd app wait dso-demo --health --timeout 300 --plaintext --server $ARGO_SERVER --auth-token $AUTH_TOKEN'
         }
