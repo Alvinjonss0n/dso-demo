@@ -115,8 +115,8 @@ pipeline {
         }
         stage('Image Scan') {
           steps {
-            container('docker-tools') {
-              sh 'trivy image --timeout 20m --exit-code 1 --severity CRITICAL --security-checks vuln alvinjonss0n/dso-demo'
+            container('trivy') {
+              sh 'trivy image --timeout 20m --exit-code 1 --severity CRITICAL --scanners vuln --cache-dir /tmp/trivycache alvinjonss0n/dso-demo'
             }
           }
         }
