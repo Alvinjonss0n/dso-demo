@@ -32,7 +32,7 @@ spec:
         - mountPath: /tmp/trivycache/
           name: trivycache
     - name: argocd
-      image: argoproj/argocd:v2.13.2
+      image: quay.io/argoproj/argocd:v2.13.2
       command:
         - cat
       tty: true
