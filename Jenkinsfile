@@ -10,6 +10,13 @@ pipeline {
     ARGO_SERVER = 'argocd-server.argocd.svc.cluster.local:80'
   }
   stages {
+    stage('Repo Scan') {
+      steps {
+        container('trufflehog') {
+          sh 'trufflehog filesystem --directory=. --fail --no-update'
+        }
+      }
+    }
     stage('Build') {
       parallel {
         stage('Compile') {
@@ -72,17 +79,17 @@ pipeline {
             }
           }
         }
-      }
-    }
-    stage('SAST') {
-      steps {
-        container('slscan') {
-          sh 'scan --type java,depscan --build'
-        }
-      }
-      post {
-        success {
-          archiveArtifacts allowEmptyArchive: true, artifacts: 'reports/*', fingerprint: true, onlyIfSuccessful: true
+        stage('SAST') {
+          steps {
+            container('slscan') {
+              sh 'scan --type java,depscan --build'
+            }
+          }
+          post {
+            success {
+              archiveArtifacts allowEmptyArchive: true, artifacts: 'reports/*', fingerprint: true, onlyIfSuccessful: true
+            }
+          }
         }
       }
     }
