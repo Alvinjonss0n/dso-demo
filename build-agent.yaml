@@ -36,6 +36,11 @@ spec:
       command:
         - cat
       tty: true
+    - name: zap
+      image: zaproxy/zap-stable:2.16.1
+      command:
+        - cat
+      tty: true
     - name: trufflehog
       image: rmkanda/trufflehog
       command:
