@@ -132,9 +132,9 @@ pipeline {
     }
     stage('Scan k8s Deploy Code') {
       steps {
-        container('kubesec') {
+        container('docker-tools') {
           script {
-            def raw = sh(script: 'kubesec scan deploy/dso-demo-deploy.yaml', returnStdout: true).trim()
+            def raw = sh(script: 'curl -sSX POST --data-binary @deploy/dso-demo-deploy.yaml https://v2.kubesec.io/scan', returnStdout: true).trim()
             def result = readJSON text: raw
             def score = result[0].score
             def criticals = result[0].scoring.critical ?: []
