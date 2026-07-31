@@ -130,6 +130,25 @@ pipeline {
         }
       }
     }
+    stage('Scan k8s Deploy Code') {
+      steps {
+        container('kubesec') {
+          script {
+            def raw = sh(script: 'kubesec scan deploy/dso-demo-deploy.yaml', returnStdout: true).trim()
+            def result = readJSON text: raw
+            def score = result[0].score
+            def criticals = result[0].scoring.critical ?: []
+            echo "kubesec score: ${score}"
+            if (criticals.size() > 0) {
+              error "kubesec CRITICAL issues, blocking deploy: ${criticals.collect{it.id}}"
+            }
+            if (score < 8) {
+              error "kubesec score ${score} below threshold 8, blocking deploy"
+            }
+          }
+        }
+      }
+    }
     stage('Deploy to Dev') {
       environment {
         AUTH_TOKEN = credentials('argocd-jenkins-deployer-token')
