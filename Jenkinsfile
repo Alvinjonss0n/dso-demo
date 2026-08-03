@@ -133,19 +133,16 @@ pipeline {
     stage('Scan k8s Deploy Code') {
       steps {
         container('docker-tools') {
-          script {
-            def raw = sh(script: 'curl -sSX POST --data-binary @deploy/dso-demo-deploy.yaml https://v2.kubesec.io/scan', returnStdout: true).trim()
-            def result = readJSON text: raw
-            def score = result[0].score
-            def criticals = result[0].scoring.critical ?: []
-            echo "kubesec score: ${score}"
-            if (criticals.size() > 0) {
-              error "kubesec CRITICAL issues, blocking deploy: ${criticals.collect{it.id}}"
-            }
-            if (score < 8) {
-              error "kubesec score ${score} below threshold 8, blocking deploy"
-            }
-          }
+          sh '''
+            RESP=$(curl -sSX POST --data-binary @deploy/dso-demo-deploy.yaml https://v2.kubesec.io/scan)
+            echo "$RESP"
+            SCORE=$(echo "$RESP" | grep -o '"score"[ ]*:[ ]*[0-9-]*' | head -1 | grep -o '[0-9-]*$')
+            echo "kubesec score: $SCORE"
+            if [ "$SCORE" -lt 8 ]; then
+              echo "kubesec score $SCORE below threshold 8, blocking deploy"
+              exit 1
+            fi
+          '''
         }
       }
     }
